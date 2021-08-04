@@ -13,8 +13,8 @@ module "public_subnets" {
 resource "aws_subnet" "public" {
   for_each          = module.public_subnets.network_cidr_blocks
   vpc_id            = aws_vpc.main.id
-  availability_zone = each.value.name
-  cidr_block        = each.value.cidr_block
+  availability_zone = each.key
+  cidr_block        = each.value
   tags              = var.public_subnet_tags
 }
 
@@ -51,8 +51,8 @@ module "private_subnets" {
 resource "aws_subnet" "private" {
   for_each          = module.private_subnets.network_cidr_blocks
   vpc_id            = aws_vpc.main.id
-  availability_zone = each.value.name
-  cidr_block        = each.value.cidr_block
+  availability_zone = each.key
+  cidr_block        = each.value
   tags              = var.private_subnet_tags
 }
 
