@@ -3,27 +3,9 @@ variable "cidr_block" {
   type        = string
 }
 
-variable "instance_tenancy" {
-  description = "A tenancy option for instances launched into the VPC."
-  type        = string
-  default     = "default"
-}
-
-variable "enable_dns_support" {
-  description = "A boolean flag to enable/disable DNS support in the VPC."
-  type        = bool
-  default     = true
-}
-
-variable "enable_dns_hostnames" {
-  description = "A boolean flag to enable/disable DNS hostnames in the VPC."
-  type        = bool
-  default     = false
-}
-
 variable "vpc_tags" {
   description = "A map of tags to assign to the resource."
-  type        = map(string)
+  type        = map
   default     = {}
   validation {
     condition     = length(var.vpc_tags) > 0
@@ -40,18 +22,81 @@ variable "public_subnets" {
   default = []
 }
 
-variable "subnet_tags" {
+variable "public_subnet_tags" {
   description = "A map of tags to assign to the resource."
-  type        = map()
+  type        = map
   default     = {}
+  validation {
+    condition     = length(var.public_subnet_tags) > 0
+    error_message = "Tags from Public Subnet is empty."
+  }
 }
 
 variable "igw_tags" {
   description = "A map of tags to assign to the resource."
-  type        = map()
+  type        = map
   default     = {}
   validation {
     condition     = length(var.igw_tags) > 0
     error_message = "Tags from Internet Gateway is empty."
+  }
+}
+
+variable "rt_igw_tags" {
+  description = "A map of tags to assign to the resource."
+  type        = map
+  default     = {}
+  validation {
+    condition     = length(var.rt_igw_tags) > 0
+    error_message = "Tags from Route Table Internet Gateway is empty."
+  }
+}
+
+variable "private_subnets" {
+  description = "A private subnets definition."
+  type        = list(object({
+    name     = string
+    new_bits = number
+  }))
+  default = []
+}
+
+variable "private_subnet_tags" {
+  description = "A map of tags to assign to the resource."
+  type        = map
+  default     = {}
+  validation {
+    condition     = length(var.private_subnet_tags) > 0
+    error_message = "Tags from Private Subnet is empty."
+  }
+}
+
+variable "eip_nat_tags" {
+  description = "A map of tags to assign to the resource."
+  type        = map
+  default     = {}
+  validation {
+    condition     = length(var.eip_nat_tags) > 0
+    error_message = "Tags from EIP for NAT Gateway is empty."
+  }
+}
+
+variable "nat_gateway_tags" {
+  description = "A map of tags to assign to the resource."
+  type        = map
+  default     = {}
+  validation {
+    condition     = length(var.nat_gateway_tags) > 0
+    error_message = "Tags from NAT Gateway is empty."
+  }
+}
+
+variable "rt_nat_tags" {
+  description = "A map of tags to assign to the resource."
+  type        = map
+  default     = {}
+  validation {
+    condition     = length(var.rt_nat_tags) > 0
+    error_message = "Tags from Route Table NAT Gateway is empty."
   }
 }
