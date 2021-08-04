@@ -29,7 +29,7 @@ resource "aws_route_table" "igw" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
+    gateway_id = aws_internet_gateway.main.id
   }
 
   tags = var.rt_igw_tags
@@ -38,7 +38,7 @@ resource "aws_route_table" "igw" {
 resource "aws_route_table_association" "gw" {
   for_each       = aws_subnet.public
   subnet_id      = each.value.id
-  route_table_id = aws_route_table.gw[each.key].id
+  route_table_id = aws_route_table.igw[each.key].id
 }
 
 module "private_subnets" {
