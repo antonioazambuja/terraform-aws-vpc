@@ -35,7 +35,7 @@ resource "aws_route_table" "igw" {
   tags = var.rt_igw_tags
 }
 
-resource "aws_route_table_association" "gw" {
+resource "aws_route_table_association" "igw" {
   for_each       = aws_subnet.public
   subnet_id      = each.value.id
   route_table_id = aws_route_table.igw[each.key].id
