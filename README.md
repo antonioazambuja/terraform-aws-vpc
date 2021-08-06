@@ -12,24 +12,46 @@ module "vpc" {
   }
   public_subnets = [
     {
-      name     = "us-east-1a"
-      new_bits = 8
+      availability_zone = "us-east-1a"
+      newbits = 8
     },
     {
-      name     = "us-east-1b"
-      new_bits = 8
+      availability_zone = "us-east-1b"
+      newbits = 8
     },
     {
-      name     = "us-east-1c"
-      new_bits = 8
+      availability_zone = "us-east-1c"
+      newbits = 8
     },
     {
-      name     = "us-east-1d"
-      new_bits = 8
+      availability_zone = "us-east-1d"
+      newbits = 8
     },
     {
-      name     = "us-east-1e"
-      new_bits = 8
+      availability_zone = "us-east-1e"
+      newbits = 8
+    },
+  ]
+  private_subnets = [
+    {
+      availability_zone = "us-east-1a"
+      newbits = 5
+    },
+    {
+      availability_zone = "us-east-1b"
+      newbits = 5
+    },
+    {
+      availability_zone = "us-east-1c"
+      newbits = 5
+    },
+    {
+      availability_zone = "us-east-1d"
+      newbits = 5
+    },
+    {
+      availability_zone = "us-east-1e"
+      newbits = 5
     },
   ]
   public_subnet_tags = {
@@ -41,28 +63,6 @@ module "vpc" {
   rt_igw_tags = {
     Name = "MainIGW"
   }
-  private_subnets = [
-    {
-      name     = "us-east-1a"
-      new_bits = 5
-    },
-    {
-      name     = "us-east-1b"
-      new_bits = 5
-    },
-    {
-      name     = "us-east-1c"
-      new_bits = 5
-    },
-    {
-      name     = "us-east-1d"
-      new_bits = 5
-    },
-    {
-      name     = "us-east-1e"
-      new_bits = 5
-    },
-  ]
   private_subnet_tags = {
     AccessMode = "PRIVATE"
   }
@@ -77,3 +77,9 @@ module "vpc" {
   }
 }
 ```
+
+## Architecture
+
+This image shows what this module creates after used:
+
+![AWS VPC Terraform Module](images/terraform-aws-vpc-overview.jpeg)
