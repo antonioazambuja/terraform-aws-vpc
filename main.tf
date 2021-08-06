@@ -3,18 +3,11 @@ resource "aws_vpc" "main" {
   tags                 = var.vpc_tags
 }
 
-module "public_subnets" {
-  source          = "hashicorp/subnets/cidr"
-  version         = "1.0.0"
-  base_cidr_block = var.cidr_block
-  networks        = var.public_subnets
-}
-
 resource "aws_subnet" "public" {
-  for_each          = module.public_subnets.network_cidr_blocks
+  for_each          = { for public_subnet in var.public_subnets: public_subnet.availability_zone => public_subnet }
   vpc_id            = aws_vpc.main.id
-  availability_zone = each.key
-  cidr_block        = each.value
+  availability_zone = each.value.availability_zone
+  cidr_block        = cidrsubnet(var.cidr_block, each.value.newbits, index(var.public_subnets, each.value))
   tags              = var.public_subnet_tags
 }
 
@@ -41,18 +34,11 @@ resource "aws_route_table_association" "igw" {
   route_table_id = aws_route_table.igw[each.key].id
 }
 
-module "private_subnets" {
-  source          = "hashicorp/subnets/cidr"
-  version         = "1.0.0"
-  base_cidr_block = element(module.public_subnets.networks[*].cidr_block, length(module.public_subnets.networks[*].cidr_block)-1)
-  networks        = var.private_subnets
-}
-
 resource "aws_subnet" "private" {
-  for_each          = module.private_subnets.network_cidr_blocks
+  for_each          = { for private_subnet in var.private_subnets: private_subnet.availability_zone => private_subnet }
   vpc_id            = aws_vpc.main.id
-  availability_zone = each.key
-  cidr_block        = each.value
+  availability_zone = each.value.availability_zone
+  cidr_block        = cidrsubnet(var.cidr_block, each.value.newbits, index(var.private_subnets, each.value)+1)
   tags              = var.private_subnet_tags
 }
 
@@ -70,12 +56,12 @@ resource "aws_nat_gateway" "nat_gateway" {
 }
 
 resource "aws_route_table" "nat" {
-  for_each   = aws_subnet.private
-  vpc_id     = aws_vpc.main.id
+  for_each = aws_nat_gateway.nat_gateway
+  vpc_id   = aws_vpc.main.id
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_gateway[each.key].id
+    nat_gateway_id = each.value.id
   }
 
   tags = var.rt_nat_tags
