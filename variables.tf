@@ -16,8 +16,8 @@ variable "vpc_tags" {
 variable "public_subnets" {
   description = "A public subnets definition."
   type        = list(object({
-    name     = string
-    new_bits = number
+    availability_zone = string
+    newbits           = number
   }))
   default = []
 }
@@ -55,8 +55,8 @@ variable "rt_igw_tags" {
 variable "private_subnets" {
   description = "A private subnets definition."
   type        = list(object({
-    name     = string
-    new_bits = number
+    availability_zone = string
+    newbits           = number
   }))
   default = []
 }
