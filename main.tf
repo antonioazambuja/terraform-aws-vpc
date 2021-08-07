@@ -1,3 +1,8 @@
+resource "random_integer" "az" {
+  min = 0
+  max = length({ for public_subnet in var.public_subnets: public_subnet.availability_zone => public_subnet }) - 1
+}
+
 resource "aws_vpc" "main" {
   cidr_block           = var.cidr_block
   tags                 = var.vpc_tags
@@ -67,8 +72,12 @@ resource "aws_route_table" "nat" {
   tags = var.rt_nat_tags
 }
 
+locals {
+  azs = keys(aws_subnet.private)
+}
+
 resource "aws_route_table_association" "nat" {
   for_each       = aws_subnet.private
   subnet_id      = each.value.id
-  route_table_id = aws_route_table.nat[each.key].id
+  route_table_id = length(aws_subnet.public) < length(aws_subnet.private) ? aws_route_table.nat[index(local.azs, random_integer.az.result)].id : aws_route_table.nat[each.key].id
 }
