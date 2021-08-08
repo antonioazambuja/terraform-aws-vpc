@@ -1,8 +1,10 @@
 locals {
-  azs = keys(aws_subnet.private)
+  azs = keys(aws_subnet.public)
 }
 
-resource "random_integer" "az" {
-  min = 0
-  max = length({ for public_subnet in var.public_subnets: public_subnet.availability_zone => public_subnet }) - 1
+resource "random_shuffle" "public_az" {
+  input = keys(aws_subnet.public)
+  keepers = {
+    length = length(local.azs)
+  }
 }

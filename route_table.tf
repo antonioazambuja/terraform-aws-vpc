@@ -13,7 +13,7 @@ resource "aws_route_table" "nat" {
 resource "aws_route_table_association" "nat" {
   for_each       = aws_subnet.private
   subnet_id      = each.value.id
-  route_table_id = length(aws_subnet.public) < length(aws_subnet.private) ? aws_route_table.nat[index(local.azs, random_integer.az.result)].id : aws_route_table.nat[each.key].id
+  route_table_id = contains(local.azs, each.key) ? aws_route_table.nat[each.key].id : aws_route_table.nat[random_shuffle.public_az.result[0]].id
 }
 
 resource "aws_route_table" "igw" {
